@@ -97,15 +97,16 @@ pub enum FlashPadType {
 #[repr(u8)]
 pub enum SerialClockFrequency {
     MHz30 = 1,
-    MHz50 = 2,
-    MHz60 = 3,
-    MHz75 = 4,
-    MHz80 = 5,
-    MHz100 = 6,
-    MHz120 = 7,
-    MHz133 = 8,
-    #[cfg(any(feature = "imxrt1060", feature = "imxrt1064"))]
-    MHz166 = 9,
+    MHz50,
+    MHz60,
+    #[cfg(not(feature = "imxrt500"))]
+    MHz75,
+    MHz80,
+    MHz100,
+    MHz120,
+    MHz133,
+    #[cfg(any(feature = "imxrt500", feature = "imxrt1060", feature = "imxrt1064"))]
+    MHz166,
 }
 
 /// A FlexSPI serial flash region
@@ -116,4 +117,20 @@ pub enum SerialFlashRegion {
     A2,
     B1,
     B2,
+}
+
+#[cfg(test)]
+mod test {
+    use super::SerialClockFrequency;
+
+    #[test]
+    #[cfg(feature = "imxrt1060")]
+    fn serial_clk_freq() {
+        assert_eq!(SerialClockFrequency::MHz133 as u8, 9);
+    }
+    #[test]
+    #[cfg(feature = "imxrt500")]
+    fn serial_clk_freq() {
+        assert_eq!(SerialClockFrequency::MHz166 as u8, 8);
+    }
 }

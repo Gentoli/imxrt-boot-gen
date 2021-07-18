@@ -22,6 +22,7 @@ keywords = [
 [dependencies]
 
 [features]
+imxrt500 = []
 imxrt1010 = []
 imxrt1060 = []
 imxrt1064 = []

@@ -10,20 +10,18 @@ use crate::flexspi;
 pub enum SerialClockFrequency {
     /// No change, keep current serial clock unchanged
     NoChange = 0,
-    MHz30 = 1,
-    MHz50 = 2,
-    MHz60 = 3,
-    MHz75 = 4,
-    MHz80 = 5,
-    MHz100 = 6,
-    #[cfg(any(feature = "imxrt1060", feature = "imxrt1064"))]
-    MHz120 = 7,
-    #[cfg(feature = "imxrt1010")]
-    MHz133 = 7,
-    #[cfg(any(feature = "imxrt1060", feature = "imxrt1064"))]
-    MHz133 = 8,
-    #[cfg(any(feature = "imxrt1060", feature = "imxrt1064"))]
-    MHz166 = 9,
+    MHz30,
+    MHz50,
+    MHz60,
+    #[cfg(not(feature = "imxrt500"))]
+    MHz75,
+    MHz80,
+    MHz100,
+    #[cfg(any(feature = "imxrt1060", feature = "imxrt1064", feature = "imxrt500"))]
+    MHz120,
+    MHz133,
+    #[cfg(any(feature = "imxrt1060", feature = "imxrt1064", feature = "imxrt500"))]
+    MHz166,
 }
 
 /// A serial NOR configuration block
@@ -106,5 +104,18 @@ mod test {
                 .page_size(256)
                 .sector_size(4095)
                 .ip_cmd_serial_clk_freq(SerialClockFrequency::MHz30);
+    }
+
+    #[test]
+    #[cfg(feature = "imxrt500")]
+    fn serial_clk_freq() {
+        assert_eq!(SerialClockFrequency::MHz80 as u8, 4);
+        assert_eq!(SerialClockFrequency::MHz166 as u8, 8);
+    }
+
+    #[test]
+    #[cfg(feature = "imxrt1010")]
+    fn serial_clk_freq() {
+        assert_eq!(SerialClockFrequency::MHz133 as u8, 7);
     }
 }
